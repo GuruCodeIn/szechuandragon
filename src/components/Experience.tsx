@@ -278,7 +278,7 @@ export default function Experience() {
               boxShadow: "0 0 6px rgba(255,160,80,0.8)",
             }}
             animate={{
-              y: [0, -600 - Math.random() * 200],
+              y: [0, -600 - ((i * 37) % 200)],
               x: [0, (i % 2 ? 1 : -1) * 40, 0],
               opacity: [0, 1, 0],
             }}
