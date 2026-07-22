@@ -68,6 +68,7 @@ function Index() {
       <Hero />
       <Experience />
       <OurStory />
+      <SignatureCollection />
     </>
   );
 }
