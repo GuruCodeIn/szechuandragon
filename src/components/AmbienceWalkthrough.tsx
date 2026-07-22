@@ -269,7 +269,7 @@ export default function AmbienceWalkthrough() {
   return (
     <section
       ref={sectionRef}
-      id="ambience-walkthrough"
+      id="gallery"
       aria-labelledby="walkthrough-title"
       className="relative overflow-hidden bg-[#050301] text-white"
       style={{ height: "100vh" }}
