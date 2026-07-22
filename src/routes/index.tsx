@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Hero from "@/components/Hero";
 import Experience from "@/components/Experience";
 import OurStory from "@/components/OurStory";
+import SignatureCollection from "@/components/SignatureCollection";
 import CinematicIntro from "@/components/CinematicIntro";
 
 export const Route = createFileRoute("/")({
@@ -67,6 +68,7 @@ function Index() {
       <Hero />
       <Experience />
       <OurStory />
+      <SignatureCollection />
     </>
   );
 }
