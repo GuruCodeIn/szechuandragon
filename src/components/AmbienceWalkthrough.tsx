@@ -278,13 +278,13 @@ export default function AmbienceWalkthrough() {
       {SCENES.map((scene, i) => (
         <div
           key={scene.id}
-          ref={(el) => (sceneRefs.current[i] = el)}
+          ref={(el) => { sceneRefs.current[i] = el; }}
           className="absolute inset-0 h-screen w-full will-change-[opacity]"
           style={{ zIndex: 1 }}
         >
           <div className="absolute inset-0 overflow-hidden">
             <img
-              ref={(el) => (imgRefs.current[i] = el)}
+              ref={(el) => { imgRefs.current[i] = el; }}
               src={scene.image}
               alt={scene.title}
               className="h-full w-full object-cover will-change-transform"
@@ -315,13 +315,13 @@ export default function AmbienceWalkthrough() {
         i === 0 ? null : (
           <div
             key={`door-${scene.id}`}
-            ref={(el) => (doorRefs.current[i] = el)}
+            ref={(el) => { doorRefs.current[i] = el; }}
             className="pointer-events-none absolute inset-0 will-change-[opacity]"
             style={{ zIndex: 30 }}
           >
             {/* Light leak */}
             <div
-              ref={(el) => (glowRefs.current[i] = el)}
+              ref={(el) => { glowRefs.current[i] = el; }}
               className="absolute left-1/2 top-0 h-full w-[40%] -translate-x-1/2 will-change-transform"
               style={{
                 background:
@@ -332,14 +332,14 @@ export default function AmbienceWalkthrough() {
             />
             <div className="absolute inset-0 flex">
               <div
-                ref={(el) => (leftRefs.current[i] = el)}
+                ref={(el) => { leftRefs.current[i] = el; }}
                 className="h-full w-1/2 will-change-transform"
                 style={{ transform: "translate3d(0,0,0)" }}
               >
                 <DoorPanel side="left" />
               </div>
               <div
-                ref={(el) => (rightRefs.current[i] = el)}
+                ref={(el) => { rightRefs.current[i] = el; }}
                 className="h-full w-1/2 will-change-transform"
                 style={{ transform: "translate3d(0,0,0)" }}
               >
@@ -355,7 +355,7 @@ export default function AmbienceWalkthrough() {
         i === 0 ? null : (
           <div
             key={`smoke-${scene.id}`}
-            ref={(el) => (smokeRefs.current[i] = el)}
+            ref={(el) => { smokeRefs.current[i] = el; }}
             className="pointer-events-none absolute inset-0 will-change-[opacity]"
             style={{
               zIndex: 25,
@@ -371,7 +371,7 @@ export default function AmbienceWalkthrough() {
       {SCENES.map((scene, i) => (
         <div
           key={`cap-${scene.id}`}
-          ref={(el) => (captionRefs.current[i] = el)}
+          ref={(el) => { captionRefs.current[i] = el; }}
           className="pointer-events-none absolute bottom-10 left-1/2 z-40 w-[min(92vw,620px)] -translate-x-1/2 text-center will-change-[opacity,transform]"
         >
           <div className="mx-auto rounded-sm border border-[#c8a25a]/30 bg-black/55 px-6 py-4 backdrop-blur-md">
