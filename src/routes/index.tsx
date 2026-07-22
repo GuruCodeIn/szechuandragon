@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import Hero from "@/components/Hero";
+import Experience from "@/components/Experience";
 import CinematicIntro from "@/components/CinematicIntro";
 
 export const Route = createFileRoute("/")({
@@ -47,6 +48,7 @@ function Index() {
     <>
       {!introDone && <CinematicIntro onDone={handleDone} />}
       <Hero />
+      <Experience />
     </>
   );
 }
