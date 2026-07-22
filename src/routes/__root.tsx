@@ -75,14 +75,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining" },
+      { name: "description", content: "Szechuan Dragon — a cinematic Indo-Chinese dining experience in Bengaluru. Signature dishes, immersive ambience, and three locations." },
+      { property: "og:title", content: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining" },
+      { property: "og:description", content: "A cinematic Indo-Chinese dining experience in Bengaluru." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+
     ],
     links: [
       {
