@@ -166,6 +166,7 @@ export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const active = useActiveSection(NAV.map((n) => n.target));
 
   // Mouse parallax
   const mx = useMotionValue(0);
@@ -209,6 +210,7 @@ export default function Hero() {
   return (
     <div
       ref={containerRef}
+      id="home"
       className="relative min-h-screen w-full overflow-hidden bg-[#08060a] text-white"
       style={{
         fontFamily:
@@ -289,11 +291,16 @@ export default function Hero() {
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4 lg:px-10">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => scrollToSection("home")}
+            className="flex items-center gap-3"
+            aria-label="Szechuan Dragon home"
+          >
             <div className="grid h-11 w-11 place-items-center rounded-full border border-[#f5c15a]/60 bg-gradient-to-br from-[#b31217] to-[#7a0a0e] shadow-[0_0_20px_rgba(255,120,40,0.35)]">
               <span className="text-lg font-bold tracking-tighter text-[#f5c15a]">囍</span>
             </div>
-            <div className="leading-none">
+            <div className="leading-none text-left">
               <div className="text-[15px] font-bold tracking-[0.22em] text-white">
                 SZECHUAN
               </div>
@@ -301,7 +308,7 @@ export default function Hero() {
                 DRAGON · BANGALORE
               </div>
             </div>
-          </a>
+          </button>
 
           {/* Desktop nav */}
           <ul className="hidden items-center gap-9 lg:flex">
