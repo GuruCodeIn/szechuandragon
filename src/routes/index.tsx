@@ -31,15 +31,31 @@ function Index() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const seen = sessionStorage.getItem("sd_intro_seen");
+    let seen: string | null = null;
+    try {
+      seen = sessionStorage.getItem("sd_intro_seen");
+    } catch {
+      /* storage disabled — skip intro */
+      return;
+    }
     if (!seen) {
       setIntroDone(false);
       document.body.style.overflow = "hidden";
+      // Safety net: never leave the intro overlay stuck on screen.
+      const bail = setTimeout(() => {
+        document.body.style.overflow = "";
+        setIntroDone(true);
+      }, 9000);
+      return () => clearTimeout(bail);
     }
   }, []);
 
   const handleDone = () => {
-    sessionStorage.setItem("sd_intro_seen", "1");
+    try {
+      sessionStorage.setItem("sd_intro_seen", "1");
+    } catch {
+      /* ignore */
+    }
     document.body.style.overflow = "";
     setIntroDone(true);
   };
@@ -52,3 +68,4 @@ function Index() {
     </>
   );
 }
+
