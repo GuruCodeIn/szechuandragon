@@ -101,7 +101,7 @@ export default function FindDragon() {
   return (
     <section
       id="locations"
-      className="relative overflow-hidden bg-[#080808] py-24 sm:py-32"
+      className="relative overflow-hidden bg-[#080808] py-24 sm:py-32 scroll-mt-24"
       style={{
         backgroundImage:
           "radial-gradient(ellipse at 20% 10%, rgba(180,140,60,0.06), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(200,30,30,0.08), transparent 55%)",

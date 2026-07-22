@@ -238,7 +238,7 @@ export default function GuestVoices() {
   const columnOffsets = ["md:mt-0", "md:mt-16", "md:mt-8"];
 
   return (
-    <section className="relative overflow-hidden bg-[#080808] py-28 md:py-36">
+    <section id="reviews" className="relative overflow-hidden bg-[#080808] py-28 md:py-36 scroll-mt-24">
       {/* Paper texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"

@@ -9,6 +9,7 @@ import DragonsFeast from "@/components/DragonsFeast";
 import AmbienceWalkthrough from "@/components/AmbienceWalkthrough";
 import GuestVoices from "@/components/GuestVoices";
 import FindDragon from "@/components/FindDragon";
+import Footer from "@/components/Footer";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,6 +78,7 @@ function Index() {
       <AmbienceWalkthrough />
       <GuestVoices />
       <FindDragon />
+      <Footer />
     </>
   );
 }

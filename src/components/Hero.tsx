@@ -3,8 +3,43 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Play, ChevronDown, Menu, X } from "lucide-react";
 import heroImg from "@/assets/hero-interior.jpg";
 import lanternImg from "@/assets/lantern.png";
+import { scrollToSection } from "./Footer";
 
-const NAV = ["Home", "About", "Menu", "Gallery", "Reviews", "Locations", "Contact"];
+const NAV: Array<{ label: string; target: string }> = [
+  { label: "Home", target: "home" },
+  { label: "About", target: "story" },
+  { label: "Menu", target: "menu" },
+  { label: "Gallery", target: "gallery" },
+  { label: "Reviews", target: "reviews" },
+  { label: "Locations", target: "locations" },
+  { label: "Contact", target: "contact" },
+];
+
+const INSTAGRAM_URL =
+  "https://www.instagram.com/szechuan_dragon?igsh=MTFsMHF2ajlnaWw3ag%3D%3D";
+const FACEBOOK_URL = "https://www.facebook.com/share/1PDXAMLDfQ/";
+
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState(ids[0]);
+  useEffect(() => {
+    const els = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target.id) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [ids]);
+  return active;
+}
 
 // A single swinging lantern — the string is the pivot, the lantern hangs below and sways like a pendulum.
 function Lantern({
@@ -131,6 +166,7 @@ export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const active = useActiveSection(NAV.map((n) => n.target));
 
   // Mouse parallax
   const mx = useMotionValue(0);
@@ -174,6 +210,7 @@ export default function Hero() {
   return (
     <div
       ref={containerRef}
+      id="home"
       className="relative min-h-screen w-full overflow-hidden bg-[#08060a] text-white"
       style={{
         fontFamily:
@@ -254,11 +291,16 @@ export default function Hero() {
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4 lg:px-10">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => scrollToSection("home")}
+            className="flex items-center gap-3"
+            aria-label="Szechuan Dragon home"
+          >
             <div className="grid h-11 w-11 place-items-center rounded-full border border-[#f5c15a]/60 bg-gradient-to-br from-[#b31217] to-[#7a0a0e] shadow-[0_0_20px_rgba(255,120,40,0.35)]">
               <span className="text-lg font-bold tracking-tighter text-[#f5c15a]">囍</span>
             </div>
-            <div className="leading-none">
+            <div className="leading-none text-left">
               <div className="text-[15px] font-bold tracking-[0.22em] text-white">
                 SZECHUAN
               </div>
@@ -266,36 +308,41 @@ export default function Hero() {
                 DRAGON · BANGALORE
               </div>
             </div>
-          </a>
+          </button>
 
           {/* Desktop nav */}
           <ul className="hidden items-center gap-9 lg:flex">
-            {NAV.map((item, i) => (
-              <li key={item}>
-                <a
-                  href={`#${item.toLowerCase()}`}
-                  className={`relative text-[13px] tracking-[0.22em] transition-colors ${
-                    i === 0 ? "text-[#f5c15a]" : "text-white/80 hover:text-[#f5c15a]"
-                  }`}
-                >
-                  {item.toUpperCase()}
-                  {i === 0 && (
-                    <span className="absolute -bottom-2 left-1/2 h-px w-6 -translate-x-1/2 bg-[#f5c15a]" />
-                  )}
-                </a>
-              </li>
-            ))}
+            {NAV.map((item) => {
+              const isActive = active === item.target;
+              return (
+                <li key={item.target}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(item.target)}
+                    className={`relative text-[13px] tracking-[0.22em] transition-colors ${
+                      isActive ? "text-[#f5c15a]" : "text-white/80 hover:text-[#f5c15a]"
+                    }`}
+                  >
+                    {item.label.toUpperCase()}
+                    {isActive && (
+                      <span className="absolute -bottom-2 left-1/2 h-px w-6 -translate-x-1/2 bg-[#f5c15a]" />
+                    )}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
 
           {/* CTA */}
           <div className="hidden lg:block">
-            <a
-              href="#reserve"
+            <button
+              type="button"
+              onClick={() => scrollToSection("locations")}
               className="group relative inline-flex items-center gap-2 border border-[#f5c15a]/70 px-6 py-3 text-[12px] font-medium tracking-[0.25em] text-[#f5c15a] transition-all hover:bg-[#f5c15a] hover:text-black hover:shadow-[0_0_30px_rgba(245,193,90,0.5)]"
             >
               RESERVE TABLE
               <span className="h-px w-6 bg-[#f5c15a] transition-all group-hover:w-10 group-hover:bg-black" />
-            </a>
+            </button>
           </div>
 
           {/* Mobile toggle */}
@@ -313,39 +360,61 @@ export default function Hero() {
           <div className="lg:hidden backdrop-blur-2xl bg-black/85 border-t border-[#f5c15a]/20">
             <ul className="flex flex-col gap-1 px-6 py-6">
               {NAV.map((item) => (
-                <li key={item}>
-                  <a
-                    href={`#${item.toLowerCase()}`}
-                    onClick={() => setMenuOpen(false)}
-                    className="block py-3 text-sm tracking-[0.25em] text-white/85 hover:text-[#f5c15a]"
+                <li key={item.target}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      scrollToSection(item.target);
+                    }}
+                    className="block w-full py-3 text-left text-sm tracking-[0.25em] text-white/85 hover:text-[#f5c15a]"
                   >
-                    {item.toUpperCase()}
-                  </a>
+                    {item.label.toUpperCase()}
+                  </button>
                 </li>
               ))}
-              <a
-                href="#reserve"
-                className="mt-4 block border border-[#f5c15a] px-6 py-3 text-center text-xs tracking-[0.25em] text-[#f5c15a]"
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  scrollToSection("locations");
+                }}
+                className="mt-4 block w-full border border-[#f5c15a] px-6 py-3 text-center text-xs tracking-[0.25em] text-[#f5c15a]"
               >
                 RESERVE TABLE
-              </a>
+              </button>
             </ul>
           </div>
         )}
       </nav>
 
-      {/* Social rail */}
-      <div className="pointer-events-auto absolute right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-5 md:flex">
-        {["M12 2.2a9.8 9.8 0 1 0 9.8 9.8A9.8 9.8 0 0 0 12 2.2Zm0 3.6a6.2 6.2 0 1 1-6.2 6.2A6.2 6.2 0 0 1 12 5.8Zm0 2.2a4 4 0 1 0 4 4 4 4 0 0 0-4-4Zm5.2-.4a1 1 0 1 1-1 1 1 1 0 0 1 1-1Z", "M13.5 21v-7h2.4l.4-2.8h-2.8V9.4c0-.8.2-1.4 1.4-1.4h1.5V5.5a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8v2.8h2.5V21Z"].map((d, i) => (
-          <a
-            key={i}
-            href="#"
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-white/70 backdrop-blur-md transition hover:border-[#f5c15a] hover:text-[#f5c15a]"
-            aria-label="Social"
-          >
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d={d} /></svg>
-          </a>
-        ))}
+      {/* Social rail — bottom-left, opens real Instagram + Facebook */}
+      <div className="pointer-events-auto absolute bottom-10 left-6 z-30 hidden flex-col gap-3 md:flex lg:left-10">
+        <a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          className="group grid h-10 w-10 place-items-center rounded-full border border-[#f5c15a]/40 bg-black/30 text-white/80 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-[#f5c15a] hover:text-[#f5c15a] hover:shadow-[0_0_20px_rgba(245,193,90,0.45)]"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
+        <a
+          href={FACEBOOK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+          className="group grid h-10 w-10 place-items-center rounded-full border border-[#f5c15a]/40 bg-black/30 text-white/80 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-[#f5c15a] hover:text-[#f5c15a] hover:shadow-[0_0_20px_rgba(245,193,90,0.45)]"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+            <path d="M13.5 21v-7h2.4l.4-2.8h-2.8V9.4c0-.8.2-1.4 1.4-1.4h1.5V5.5a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8v2.8h2.5V21Z" />
+          </svg>
+        </a>
+        <div className="mx-auto h-8 w-px bg-gradient-to-b from-[#f5c15a]/50 to-transparent" />
       </div>
 
       {/* -- Main content -- */}
@@ -445,21 +514,23 @@ export default function Hero() {
               animate="show"
               className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
             >
-              <a
-                href="#reserve"
+              <button
+                type="button"
+                onClick={() => scrollToSection("locations")}
                 className="group relative inline-flex items-center justify-center gap-3 overflow-hidden border border-[#f5c15a]/70 bg-gradient-to-b from-[#b31217] to-[#7a0a0e] px-8 py-4 text-[12px] font-semibold tracking-[0.28em] text-white shadow-[0_0_30px_rgba(179,18,23,0.45)] transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(245,193,90,0.35)]"
               >
                 <span className="relative z-10">RESERVE TABLE</span>
                 <span className="relative z-10 h-px w-5 bg-[#f5c15a] transition-all group-hover:w-8" />
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-              </a>
-              <a
-                href="#menu"
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("menu")}
                 className="group inline-flex items-center justify-center gap-3 border border-[#f5c15a]/70 px-8 py-4 text-[12px] font-semibold tracking-[0.28em] text-[#f5c15a] transition-all hover:bg-[#f5c15a] hover:text-black"
               >
                 EXPLORE MENU
                 <span className="h-px w-5 bg-current transition-all group-hover:w-8" />
-              </a>
+              </button>
             </motion.div>
           </div>
 

@@ -183,7 +183,7 @@ export default function Experience() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative overflow-hidden bg-[#080808] py-28 text-white"
+      className="relative overflow-hidden bg-[#080808] py-28 text-white scroll-mt-24"
       style={{
         fontFamily:
           '"Cormorant Garamond", "Playfair Display", ui-serif, Georgia, serif',
