@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import Hero from "@/components/Hero";
+import CinematicIntro from "@/components/CinematicIntro";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,5 +26,28 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return <Hero />;
+  const [introDone, setIntroDone] = useState(true);
+
+  useEffect(() => {
+    // Play intro once per session
+    if (typeof window === "undefined") return;
+    const seen = sessionStorage.getItem("sd_intro_seen");
+    if (!seen) {
+      setIntroDone(false);
+      document.body.style.overflow = "hidden";
+    }
+  }, []);
+
+  const handleDone = () => {
+    sessionStorage.setItem("sd_intro_seen", "1");
+    document.body.style.overflow = "";
+    setIntroDone(true);
+  };
+
+  return (
+    <>
+      {!introDone && <CinematicIntro onDone={handleDone} />}
+      <Hero />
+    </>
+  );
 }
