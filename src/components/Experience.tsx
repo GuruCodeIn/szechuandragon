@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Soup, Leaf, UtensilsCrossed, Users, Crown, Lantern } from "lucide-react";
+import { Soup, Leaf, UtensilsCrossed, Users, Crown, Lamp } from "lucide-react";
 
 const features = [
   {
@@ -29,7 +29,7 @@ const features = [
     desc: "Premium dining experience with exceptional value and quality.",
   },
   {
-    Icon: Lantern,
+    Icon: Lamp,
     title: "Premium Ambience",
     desc: "Elegant interiors inspired by traditional Chinese culture with warm lighting and luxurious décor.",
   },
