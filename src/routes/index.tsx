@@ -66,6 +66,7 @@ function Index() {
       {!introDone && <CinematicIntro onDone={handleDone} />}
       <Hero />
       <Experience />
+      <OurStory />
     </>
   );
 }
