@@ -5,6 +5,7 @@ import Experience from "@/components/Experience";
 import OurStory from "@/components/OurStory";
 import SignatureCollection from "@/components/SignatureCollection";
 import CinematicIntro from "@/components/CinematicIntro";
+import DragonsFeast from "@/components/DragonsFeast";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -69,6 +70,7 @@ function Index() {
       <Experience />
       <OurStory />
       <SignatureCollection />
+      <DragonsFeast />
     </>
   );
 }
