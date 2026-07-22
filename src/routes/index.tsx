@@ -29,7 +29,6 @@ function Index() {
   const [introDone, setIntroDone] = useState(true);
 
   useEffect(() => {
-    // Play intro once per session
     if (typeof window === "undefined") return;
     const seen = sessionStorage.getItem("sd_intro_seen");
     if (!seen) {
