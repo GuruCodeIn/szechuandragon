@@ -116,8 +116,9 @@ export default function SignatureCollection() {
 
   return (
     <section
+      id="menu"
       ref={sectionRef}
-      className="relative overflow-hidden py-32 md:py-40"
+      className="relative overflow-hidden py-32 md:py-40 scroll-mt-24"
       style={{ background: "#080808" }}
     >
       {/* Silk texture */}
