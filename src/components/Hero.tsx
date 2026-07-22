@@ -312,21 +312,25 @@ export default function Hero() {
 
           {/* Desktop nav */}
           <ul className="hidden items-center gap-9 lg:flex">
-            {NAV.map((item, i) => (
-              <li key={item}>
-                <a
-                  href={`#${item.toLowerCase()}`}
-                  className={`relative text-[13px] tracking-[0.22em] transition-colors ${
-                    i === 0 ? "text-[#f5c15a]" : "text-white/80 hover:text-[#f5c15a]"
-                  }`}
-                >
-                  {item.toUpperCase()}
-                  {i === 0 && (
-                    <span className="absolute -bottom-2 left-1/2 h-px w-6 -translate-x-1/2 bg-[#f5c15a]" />
-                  )}
-                </a>
-              </li>
-            ))}
+            {NAV.map((item) => {
+              const isActive = active === item.target;
+              return (
+                <li key={item.target}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(item.target)}
+                    className={`relative text-[13px] tracking-[0.22em] transition-colors ${
+                      isActive ? "text-[#f5c15a]" : "text-white/80 hover:text-[#f5c15a]"
+                    }`}
+                  >
+                    {item.label.toUpperCase()}
+                    {isActive && (
+                      <span className="absolute -bottom-2 left-1/2 h-px w-6 -translate-x-1/2 bg-[#f5c15a]" />
+                    )}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
 
           {/* CTA */}
