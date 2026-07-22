@@ -20,11 +20,11 @@ export const Route = createFileRoute("/")({
         content:
           "Step into Szechuan Dragon — a cinematic Indo-Chinese fine dining experience in Bangalore where traditional Chinese flavours meet modern culinary artistry.",
       },
-      { property: "og:title", content: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining" },
+      { property: "og:title", content: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining, Bangalore" },
       {
         property: "og:description",
         content:
-          "Where traditional Chinese flavours meet modern culinary excellence. Reserve your table at Bangalore's most cinematic Indo-Chinese restaurant.",
+          "Step into Szechuan Dragon — a cinematic Indo-Chinese fine dining experience in Bangalore where traditional Chinese flavours meet modern culinary artistry.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

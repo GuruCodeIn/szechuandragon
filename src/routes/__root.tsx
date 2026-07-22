@@ -75,20 +75,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining" },
-      { name: "description", content: "Szechuan Dragon — a cinematic Indo-Chinese dining experience in Bengaluru. Signature dishes, immersive ambience, and three locations." },
-      { property: "og:title", content: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining" },
-      { property: "og:description", content: "A cinematic Indo-Chinese dining experience in Bengaluru." },
+      { title: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining, Bangalore" },
+      { name: "description", content: "Step into Szechuan Dragon — a cinematic Indo-Chinese fine dining experience in Bangalore where traditional Chinese flavours meet modern culinary artistry." },
+      { property: "og:title", content: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining, Bangalore" },
+      { property: "og:description", content: "Step into Szechuan Dragon — a cinematic Indo-Chinese fine dining experience in Bangalore where traditional Chinese flavours meet modern culinary artistry." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
 
+      { name: "twitter:title", content: "Szechuan Dragon — Authentic Indo-Chinese Fine Dining, Bangalore" },
+      { name: "twitter:description", content: "Step into Szechuan Dragon — a cinematic Indo-Chinese fine dining experience in Bangalore where traditional Chinese flavours meet modern culinary artistry." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/EnWSrI21N4MwlGSI6fS8Y0VRg8j2/social-images/social-1784744506012-PHOTO-2026-07-22-12-14-34.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/EnWSrI21N4MwlGSI6fS8Y0VRg8j2/social-images/social-1784744506012-PHOTO-2026-07-22-12-14-34.webp" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
