@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, Navigation, Clock, MapPin, X } from "lucide-react";
+import { Phone, Navigation, Clock, MapPin } from "lucide-react";
 
 type Branch = {
   id: string;
