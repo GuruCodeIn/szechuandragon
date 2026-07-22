@@ -514,21 +514,23 @@ export default function Hero() {
               animate="show"
               className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
             >
-              <a
-                href="#reserve"
+              <button
+                type="button"
+                onClick={() => scrollToSection("locations")}
                 className="group relative inline-flex items-center justify-center gap-3 overflow-hidden border border-[#f5c15a]/70 bg-gradient-to-b from-[#b31217] to-[#7a0a0e] px-8 py-4 text-[12px] font-semibold tracking-[0.28em] text-white shadow-[0_0_30px_rgba(179,18,23,0.45)] transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(245,193,90,0.35)]"
               >
                 <span className="relative z-10">RESERVE TABLE</span>
                 <span className="relative z-10 h-px w-5 bg-[#f5c15a] transition-all group-hover:w-8" />
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-              </a>
-              <a
-                href="#menu"
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("menu")}
                 className="group inline-flex items-center justify-center gap-3 border border-[#f5c15a]/70 px-8 py-4 text-[12px] font-semibold tracking-[0.28em] text-[#f5c15a] transition-all hover:bg-[#f5c15a] hover:text-black"
               >
                 EXPLORE MENU
                 <span className="h-px w-5 bg-current transition-all group-hover:w-8" />
-              </a>
+              </button>
             </motion.div>
           </div>
 
