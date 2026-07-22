@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import soupImg from "@/assets/dish-hot-sour-soup.png";
 import babycornImg from "@/assets/dish-chilli-basil-babycorn.png";
-import chilliBasilChickenImg from "@/assets/dish-chilli-basil-chicken.png";
+import chilliBasilChickenAsset from "@/assets/dish-chilli-basil-chicken.png.asset.json";
 import lollipopImg from "@/assets/dish-chicken-lollipop.png";
+
+const chilliBasilChickenImg = chilliBasilChickenAsset.url;
 
 type Course = {
   id: string;
