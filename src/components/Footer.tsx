@@ -241,7 +241,7 @@ export default function Footer() {
                 aria-label="Instagram"
                 className="group grid h-11 w-11 place-items-center rounded-full border border-[#d4af37]/40 bg-white/[0.02] text-[#d4af37] backdrop-blur-md transition-all hover:-translate-y-1 hover:border-[#d4af37] hover:bg-[#c8352a]/20 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)]"
               >
-                <Instagram className="h-4 w-4 transition-transform group-hover:scale-110" />
+                <InstagramIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
               </a>
               <a
                 href={FACEBOOK}
@@ -250,7 +250,7 @@ export default function Footer() {
                 aria-label="Facebook"
                 className="group grid h-11 w-11 place-items-center rounded-full border border-[#d4af37]/40 bg-white/[0.02] text-[#d4af37] backdrop-blur-md transition-all hover:-translate-y-1 hover:border-[#d4af37] hover:bg-[#c8352a]/20 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)]"
               >
-                <Facebook className="h-4 w-4 transition-transform group-hover:scale-110" />
+                <FacebookIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
               </a>
             </div>
           </motion.div>
