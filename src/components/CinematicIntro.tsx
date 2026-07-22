@@ -37,18 +37,19 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
     try {
       const AC = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (!AC) return;
-      ctx = new AC();
-      const now = ctx.currentTime;
-      const notes = [1046, 1318, 1568, 2093]; // C6 E6 G6 C7
+      ctx = new AC() as AudioContext;
+      const ac = ctx;
+      const now = ac.currentTime;
+      const notes = [1046, 1318, 1568, 2093];
       notes.forEach((f, i) => {
-        const o = ctx!.createOscillator();
-        const g = ctx!.createGain();
+        const o = ac.createOscillator();
+        const g = ac.createGain();
         o.type = "sine";
         o.frequency.value = f;
         g.gain.setValueAtTime(0.0001, now + i * 0.12);
         g.gain.exponentialRampToValueAtTime(0.06, now + 0.02 + i * 0.12);
         g.gain.exponentialRampToValueAtTime(0.0001, now + 1.8 + i * 0.12);
-        o.connect(g).connect(ctx!.destination);
+        o.connect(g).connect(ac.destination);
         o.start(now + i * 0.12);
         o.stop(now + 2 + i * 0.12);
       });
