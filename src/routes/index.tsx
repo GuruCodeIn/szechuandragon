@@ -72,6 +72,7 @@ function Index() {
       <OurStory />
       <SignatureCollection />
       <DragonsFeast />
+      <AmbienceWalkthrough />
     </>
   );
 }
