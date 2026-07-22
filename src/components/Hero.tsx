@@ -75,17 +75,25 @@ function Lantern({
 }
 
 // Floating ember particles rendered in pure CSS/JS — no libraries needed.
+// Initialize on client only to avoid SSR/hydration mismatch from Math.random.
 function Embers() {
-  const [particles] = useState(() =>
-    Array.from({ length: 28 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      delay: Math.random() * 8,
-      duration: 10 + Math.random() * 12,
-      drift: (Math.random() - 0.5) * 60,
-    })),
-  );
+  const [particles, setParticles] = useState<
+    Array<{ id: number; left: number; size: number; delay: number; duration: number; drift: number; rise: number }>
+  >([]);
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 28 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        size: Math.random() * 3 + 1,
+        delay: Math.random() * 8,
+        duration: 10 + Math.random() * 12,
+        drift: (Math.random() - 0.5) * 60,
+        rise: 700 + Math.random() * 200,
+      })),
+    );
+  }, []);
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -102,7 +110,7 @@ function Embers() {
             boxShadow: "0 0 8px rgba(255,140,60,0.9)",
           }}
           animate={{
-            y: [0, -700 - Math.random() * 200],
+            y: [0, -p.rise],
             x: [0, p.drift, -p.drift, 0],
             opacity: [0, 1, 1, 0],
           }}
@@ -117,6 +125,7 @@ function Embers() {
     </div>
   );
 }
+
 
 export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
