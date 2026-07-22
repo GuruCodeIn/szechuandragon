@@ -335,13 +335,14 @@ export default function Hero() {
 
           {/* CTA */}
           <div className="hidden lg:block">
-            <a
-              href="#reserve"
+            <button
+              type="button"
+              onClick={() => scrollToSection("locations")}
               className="group relative inline-flex items-center gap-2 border border-[#f5c15a]/70 px-6 py-3 text-[12px] font-medium tracking-[0.25em] text-[#f5c15a] transition-all hover:bg-[#f5c15a] hover:text-black hover:shadow-[0_0_30px_rgba(245,193,90,0.5)]"
             >
               RESERVE TABLE
               <span className="h-px w-6 bg-[#f5c15a] transition-all group-hover:w-10 group-hover:bg-black" />
-            </a>
+            </button>
           </div>
 
           {/* Mobile toggle */}
@@ -359,39 +360,61 @@ export default function Hero() {
           <div className="lg:hidden backdrop-blur-2xl bg-black/85 border-t border-[#f5c15a]/20">
             <ul className="flex flex-col gap-1 px-6 py-6">
               {NAV.map((item) => (
-                <li key={item}>
-                  <a
-                    href={`#${item.toLowerCase()}`}
-                    onClick={() => setMenuOpen(false)}
-                    className="block py-3 text-sm tracking-[0.25em] text-white/85 hover:text-[#f5c15a]"
+                <li key={item.target}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      scrollToSection(item.target);
+                    }}
+                    className="block w-full py-3 text-left text-sm tracking-[0.25em] text-white/85 hover:text-[#f5c15a]"
                   >
-                    {item.toUpperCase()}
-                  </a>
+                    {item.label.toUpperCase()}
+                  </button>
                 </li>
               ))}
-              <a
-                href="#reserve"
-                className="mt-4 block border border-[#f5c15a] px-6 py-3 text-center text-xs tracking-[0.25em] text-[#f5c15a]"
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  scrollToSection("locations");
+                }}
+                className="mt-4 block w-full border border-[#f5c15a] px-6 py-3 text-center text-xs tracking-[0.25em] text-[#f5c15a]"
               >
                 RESERVE TABLE
-              </a>
+              </button>
             </ul>
           </div>
         )}
       </nav>
 
-      {/* Social rail */}
-      <div className="pointer-events-auto absolute right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-5 md:flex">
-        {["M12 2.2a9.8 9.8 0 1 0 9.8 9.8A9.8 9.8 0 0 0 12 2.2Zm0 3.6a6.2 6.2 0 1 1-6.2 6.2A6.2 6.2 0 0 1 12 5.8Zm0 2.2a4 4 0 1 0 4 4 4 4 0 0 0-4-4Zm5.2-.4a1 1 0 1 1-1 1 1 1 0 0 1 1-1Z", "M13.5 21v-7h2.4l.4-2.8h-2.8V9.4c0-.8.2-1.4 1.4-1.4h1.5V5.5a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8v2.8h2.5V21Z"].map((d, i) => (
-          <a
-            key={i}
-            href="#"
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-white/70 backdrop-blur-md transition hover:border-[#f5c15a] hover:text-[#f5c15a]"
-            aria-label="Social"
-          >
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d={d} /></svg>
-          </a>
-        ))}
+      {/* Social rail — bottom-left, opens real Instagram + Facebook */}
+      <div className="pointer-events-auto absolute bottom-10 left-6 z-30 hidden flex-col gap-3 md:flex lg:left-10">
+        <a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          className="group grid h-10 w-10 place-items-center rounded-full border border-[#f5c15a]/40 bg-black/30 text-white/80 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-[#f5c15a] hover:text-[#f5c15a] hover:shadow-[0_0_20px_rgba(245,193,90,0.45)]"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
+        <a
+          href={FACEBOOK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+          className="group grid h-10 w-10 place-items-center rounded-full border border-[#f5c15a]/40 bg-black/30 text-white/80 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-[#f5c15a] hover:text-[#f5c15a] hover:shadow-[0_0_20px_rgba(245,193,90,0.45)]"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+            <path d="M13.5 21v-7h2.4l.4-2.8h-2.8V9.4c0-.8.2-1.4 1.4-1.4h1.5V5.5a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8v2.8h2.5V21Z" />
+          </svg>
+        </a>
+        <div className="mx-auto h-8 w-px bg-gradient-to-b from-[#f5c15a]/50 to-transparent" />
       </div>
 
       {/* -- Main content -- */}
