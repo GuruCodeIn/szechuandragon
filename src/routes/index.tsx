@@ -76,6 +76,7 @@ function Index() {
       <DragonsFeast />
       <AmbienceWalkthrough />
       <GuestVoices />
+      <FindDragon />
     </>
   );
 }
