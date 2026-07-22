@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Play, ChevronDown, Menu, X, Instagram, Facebook } from "lucide-react";
+import { Play, ChevronDown, Menu, X } from "lucide-react";
 import heroImg from "@/assets/hero-interior.jpg";
 import lanternImg from "@/assets/lantern.png";
 
@@ -327,14 +327,14 @@ export default function Hero() {
 
       {/* Social rail */}
       <div className="pointer-events-auto absolute right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-5 md:flex">
-        {[Instagram, Facebook].map((Icon, i) => (
+        {["M12 2.2a9.8 9.8 0 1 0 9.8 9.8A9.8 9.8 0 0 0 12 2.2Zm0 3.6a6.2 6.2 0 1 1-6.2 6.2A6.2 6.2 0 0 1 12 5.8Zm0 2.2a4 4 0 1 0 4 4 4 4 0 0 0-4-4Zm5.2-.4a1 1 0 1 1-1 1 1 1 0 0 1 1-1Z", "M13.5 21v-7h2.4l.4-2.8h-2.8V9.4c0-.8.2-1.4 1.4-1.4h1.5V5.5a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8v2.8h2.5V21Z"].map((d, i) => (
           <a
             key={i}
             href="#"
             className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-white/70 backdrop-blur-md transition hover:border-[#f5c15a] hover:text-[#f5c15a]"
             aria-label="Social"
           >
-            <Icon size={15} />
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d={d} /></svg>
           </a>
         ))}
       </div>
