@@ -1,103 +1,77 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useScroll, useSpring, useTransform, MotionValue } from "framer-motion";
-import entranceAsset from "@/assets/ambience-entrance.jpg.asset.json";
-import receptionAsset from "@/assets/ambience-reception.jpg.asset.json";
-import diningAsset from "@/assets/ambience-dining.jpg.asset.json";
-import lanternAsset from "@/assets/ambience-lantern-ceiling.jpg.asset.json";
-import decorAsset from "@/assets/ambience-decor.jpg.asset.json";
-import privateAsset from "@/assets/ambience-private.jpg.asset.json";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+/* ------------------------------------------------------------------ */
+/* Auto-discover every ambience-*.jpg.asset.json in src/assets         */
+/* ------------------------------------------------------------------ */
+type AssetJson = { url: string; original_filename: string };
+
+const ambienceModules = import.meta.glob<AssetJson>(
+  "../assets/ambience-*.jpg.asset.json",
+  { eager: true, import: "default" }
+);
 
 type Scene = {
   id: string;
-  chapter: string;
   title: string;
-  caption: string;
+  subtitle: string;
   image: string;
-  /** camera move within the scene */
-  from: { scale: number; x: number; y: number; rotate?: number };
-  to: { scale: number; x: number; y: number; rotate?: number };
 };
 
-const SCENES: Scene[] = [
-  {
-    id: "entrance",
-    chapter: "Scene I",
-    title: "The Entrance",
-    caption: "Soft lantern light spills onto the doorway. Step inside.",
-    image: entranceAsset.url,
-    from: { scale: 1.05, x: 0, y: 0 },
-    to: { scale: 1.35, x: 0, y: -2 },
-  },
-  {
-    id: "reception",
-    chapter: "Scene II",
-    title: "The Reception",
-    caption: "A warm welcome beneath handwoven lanterns.",
-    image: receptionAsset.url,
-    from: { scale: 1.15, x: -3, y: 2 },
-    to: { scale: 1.3, x: 3, y: -2 },
-  },
-  {
-    id: "dining",
-    chapter: "Scene III",
-    title: "The Grand Dining Hall",
-    caption: "Where every table tells a story of flavour.",
-    image: diningAsset.url,
-    from: { scale: 1.1, x: 4, y: 0 },
-    to: { scale: 1.25, x: -4, y: 0 },
-  },
-  {
-    id: "lantern",
-    chapter: "Scene IV",
-    title: "Under a Sky of Lanterns",
-    caption: "Look up — a constellation of warm silk and bamboo.",
-    image: lanternAsset.url,
-    from: { scale: 1.2, x: 0, y: 4, rotate: -1 },
-    to: { scale: 1.05, x: 0, y: -3, rotate: 1 },
-  },
-  {
-    id: "decor",
-    chapter: "Scene V",
-    title: "Artistry in the Details",
-    caption: "Hand-carved screens, painted verses, brass and cinnabar.",
-    image: decorAsset.url,
-    from: { scale: 1.15, x: -4, y: 0 },
-    to: { scale: 1.28, x: 4, y: -2 },
-  },
-  {
-    id: "private",
-    chapter: "Scene VI",
-    title: "The Private Chamber",
-    caption: "The most intimate corner of the Dragon's house.",
-    image: privateAsset.url,
-    from: { scale: 1.1, x: 0, y: 0 },
-    to: { scale: 1.22, x: 0, y: 0 },
-  },
-];
+const TITLES: Record<string, { title: string; subtitle: string }> = {
+  entrance: { title: "The Entrance", subtitle: "Cross the threshold of the Dragon's house." },
+  reception: { title: "The Reception", subtitle: "A warm welcome beneath handwoven lanterns." },
+  dining: { title: "The Grand Dining Hall", subtitle: "Where every table tells a story of flavour." },
+  "lantern-ceiling": { title: "Under a Sky of Lanterns", subtitle: "A constellation of warm silk and bamboo." },
+  lantern: { title: "Under a Sky of Lanterns", subtitle: "A constellation of warm silk and bamboo." },
+  decor: { title: "Artistry in the Details", subtitle: "Hand-carved screens, brass and cinnabar." },
+  private: { title: "The Private Chamber", subtitle: "The most intimate corner of the house." },
+};
 
-/* One scene band inside the total scroll:
-   [enter(open door)] → [dwell(camera moves)] → [exit(next door closes/opens through)]
-   We use 0..1 progress per scene.
-*/
-const SCENE_COUNT = SCENES.length;
+const SCENES: Scene[] = Object.entries(ambienceModules)
+  .map(([path, mod]) => {
+    const match = path.match(/ambience-([^.]+)\.jpg\.asset\.json$/);
+    const key = match ? match[1] : path;
+    const meta = TITLES[key] ?? {
+      title: key
+        .split("-")
+        .map((w) => w[0].toUpperCase() + w.slice(1))
+        .join(" "),
+      subtitle: "Another corner of the Dragon's house.",
+    };
+    return { id: key, image: mod.url, ...meta };
+  })
+  .sort((a, b) => {
+    // Preferred narrative order; unknown ids go to the end alphabetically.
+    const order = ["entrance", "reception", "dining", "lantern-ceiling", "lantern", "decor", "private"];
+    const ai = order.indexOf(a.id);
+    const bi = order.indexOf(b.id);
+    if (ai === -1 && bi === -1) return a.id.localeCompare(b.id);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
 
 /* ------------------------------------------------------------------ */
-/* Chinese door pair                                                   */
+/* Chinese door panel                                                  */
 /* ------------------------------------------------------------------ */
 function DoorPanel({ side }: { side: "left" | "right" }) {
   const isLeft = side === "left";
   return (
     <div
-      className="relative h-full w-1/2 overflow-hidden"
+      className="relative h-full w-full overflow-hidden"
       style={{
-        background:
-          "linear-gradient(135deg, #2a1408 0%, #3d1e0c 40%, #1a0a04 100%)",
+        background: "linear-gradient(135deg, #2a1408 0%, #3d1e0c 40%, #1a0a04 100%)",
         boxShadow: isLeft
           ? "inset -30px 0 60px rgba(0,0,0,0.9), inset 0 0 120px rgba(0,0,0,0.6)"
           : "inset 30px 0 60px rgba(0,0,0,0.9), inset 0 0 120px rgba(0,0,0,0.6)",
       }}
     >
-      {/* wood grain */}
       <div
         className="absolute inset-0 opacity-50 mix-blend-overlay"
         style={{
@@ -105,21 +79,14 @@ function DoorPanel({ side }: { side: "left" | "right" }) {
             "repeating-linear-gradient(180deg, rgba(80,40,15,0.25) 0 2px, transparent 2px 6px), repeating-linear-gradient(90deg, rgba(20,10,5,0.15) 0 40px, transparent 40px 90px)",
         }}
       />
-      {/* Inner gold frame */}
       <div
-        className="absolute inset-6 border-2 rounded-sm"
+        className="absolute inset-6 rounded-sm border-2"
         style={{
           borderColor: "rgba(200,162,90,0.55)",
-          boxShadow:
-            "inset 0 0 20px rgba(200,162,90,0.15), 0 0 15px rgba(200,162,90,0.1)",
+          boxShadow: "inset 0 0 20px rgba(200,162,90,0.15), 0 0 15px rgba(200,162,90,0.1)",
         }}
       />
-      <div
-        className="absolute inset-10 border rounded-sm"
-        style={{ borderColor: "rgba(200,162,90,0.3)" }}
-      />
-
-      {/* Lattice carving */}
+      <div className="absolute inset-10 rounded-sm border" style={{ borderColor: "rgba(200,162,90,0.3)" }} />
       <svg
         className="absolute inset-12 h-[calc(100%-6rem)] w-[calc(100%-6rem)] opacity-80"
         viewBox="0 0 100 200"
@@ -133,240 +100,30 @@ function DoorPanel({ side }: { side: "left" | "right" }) {
           </pattern>
         </defs>
         <rect x="5" y="10" width="90" height="80" fill={`url(#lattice-${side})`} />
-        {/* dragon medallion */}
         <circle cx="50" cy="130" r="18" fill="none" stroke="rgba(230,198,122,0.7)" strokeWidth="0.6" />
         <circle cx="50" cy="130" r="14" fill="none" stroke="rgba(230,198,122,0.4)" strokeWidth="0.3" />
         <text
           x="50"
-          y="135"
+          y="136"
           textAnchor="middle"
           fontSize="14"
-          fill="rgba(230,198,122,0.85)"
+          fill="rgba(230,198,122,0.9)"
           fontFamily="'Cormorant Garamond', serif"
         >
           {isLeft ? "龍" : "門"}
         </text>
       </svg>
-
-      {/* Brass handle */}
       <div
         className={`absolute top-1/2 ${isLeft ? "right-3" : "left-3"} h-16 w-3 -translate-y-1/2 rounded-full`}
         style={{
-          background:
-            "linear-gradient(180deg, #f4d78a 0%, #b58a3a 50%, #6b4818 100%)",
+          background: "linear-gradient(180deg, #f4d78a 0%, #b58a3a 50%, #6b4818 100%)",
           boxShadow: "0 0 10px rgba(230,198,122,0.5)",
         }}
       />
       <div
-        className={`absolute top-1/2 ${isLeft ? "right-2" : "left-2"} h-5 w-5 -translate-y-1/2 rounded-full`}
-        style={{
-          background:
-            "radial-gradient(circle at 30% 30%, #f4d78a, #8a5a1c 70%, #3a1e08)",
-          boxShadow: "0 0 12px rgba(230,198,122,0.6)",
-        }}
-      />
-
-      {/* Edge highlight */}
-      <div
         className={`absolute top-0 ${isLeft ? "right-0" : "left-0"} h-full w-[2px]`}
         style={{
-          background:
-            "linear-gradient(180deg, transparent, rgba(230,198,122,0.6), transparent)",
-        }}
-      />
-    </div>
-  );
-}
-
-function DoorTransition({
-  progress,
-  label,
-}: {
-  progress: MotionValue<number>; // 0 closed → 1 fully open
-  label?: string;
-}) {
-  // Left door slides left, right door slides right
-  const leftX = useTransform(progress, [0, 1], ["0%", "-100%"]);
-  const rightX = useTransform(progress, [0, 1], ["0%", "100%"]);
-  const glow = useTransform(progress, [0, 0.3, 1], [0, 1, 0.7]);
-  const gapWidth = useTransform(progress, [0, 1], ["0%", "100%"]);
-  const cover = useTransform(progress, [0, 0.98, 1], [1, 1, 0]);
-
-  return (
-    <motion.div
-      className="pointer-events-none absolute inset-0 z-30"
-      style={{ opacity: cover }}
-    >
-      {/* Warm light leaking through the gap */}
-      <motion.div
-        className="absolute left-1/2 top-0 h-full -translate-x-1/2"
-        style={{
-          width: gapWidth,
-          background:
-            "radial-gradient(ellipse at center, rgba(255,190,90,0.85) 0%, rgba(220,90,40,0.4) 40%, transparent 75%)",
-          filter: "blur(20px)",
-          opacity: glow,
-        }}
-      />
-
-      {/* The two door panels */}
-      <div className="absolute inset-0 flex">
-        <motion.div className="h-full w-1/2" style={{ x: leftX }}>
-          <DoorPanel side="left" />
-        </motion.div>
-        <motion.div className="h-full w-1/2" style={{ x: rightX }}>
-          <DoorPanel side="right" />
-        </motion.div>
-      </div>
-
-      {/* Threshold shadow */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-24"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent, rgba(0,0,0,0.7))",
-        }}
-      />
-
-      {label && (
-        <motion.div
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center"
-          style={{ opacity: useTransform(progress, [0, 0.3, 0.8], [0, 1, 0]) }}
-        >
-          <span
-            className="text-[10px] uppercase tracking-[0.6em] text-[#e6c67a]/80"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {label}
-          </span>
-        </motion.div>
-      )}
-    </motion.div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Scene layer                                                         */
-/* ------------------------------------------------------------------ */
-function SceneLayer({
-  scene,
-  visibility, // 0..1
-  camera, // 0..1 (scene-local dwell progress)
-}: {
-  scene: Scene;
-  visibility: MotionValue<number>;
-  camera: MotionValue<number>;
-}) {
-  const scale = useTransform(camera, [0, 1], [scene.from.scale, scene.to.scale]);
-  const x = useTransform(camera, [0, 1], [scene.from.x, scene.to.x]);
-  const y = useTransform(camera, [0, 1], [scene.from.y, scene.to.y]);
-  const rotate = useTransform(
-    camera,
-    [0, 1],
-    [scene.from.rotate ?? 0, scene.to.rotate ?? 0]
-  );
-
-  return (
-    <motion.div
-      className="absolute inset-0"
-      style={{ opacity: visibility }}
-    >
-      <motion.div
-        className="absolute inset-0"
-        style={{ scale, x: useTransform(x, (v) => `${v}%`), y: useTransform(y, (v) => `${v}%`), rotate }}
-      >
-        <img
-          src={scene.image}
-          alt={scene.title}
-          className="h-full w-full object-cover"
-          loading="lazy"
-          draggable={false}
-        />
-      </motion.div>
-      {/* Cinematic vignette + warm tone */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 55%, transparent 40%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.85) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 mix-blend-overlay"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 30%, rgba(255,160,60,0.15), transparent 65%)",
-        }}
-      />
-    </motion.div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Ambient (embers, dust, light rays)                                  */
-/* ------------------------------------------------------------------ */
-function Ambient() {
-  const [particles, setParticles] = useState<
-    { id: number; x: number; d: number; delay: number; size: number }[]
-  >([]);
-  useEffect(() => {
-    setParticles(
-      Array.from({ length: 30 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        d: 10 + Math.random() * 14,
-        delay: Math.random() * 10,
-        size: 1 + Math.random() * 2,
-      }))
-    );
-  }, []);
-
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden z-20">
-      {/* Volumetric rays */}
-      <motion.div
-        className="absolute inset-0 opacity-40"
-        style={{
-          background:
-            "conic-gradient(from 210deg at 50% -10%, transparent 0deg, rgba(255,180,90,0.25) 20deg, transparent 40deg, transparent 340deg, rgba(255,180,90,0.2) 360deg)",
-          mixBlendMode: "screen",
-        }}
-        animate={{ opacity: [0.25, 0.5, 0.25] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Golden dust */}
-      {particles.map((p) => (
-        <motion.span
-          key={p.id}
-          className="absolute bottom-0 rounded-full bg-[#e6c67a]"
-          style={{
-            left: `${p.x}%`,
-            width: p.size,
-            height: p.size,
-            boxShadow: "0 0 6px #e6c67a",
-          }}
-          initial={{ y: 0, opacity: 0 }}
-          animate={{ y: -900, opacity: [0, 0.9, 0], x: [0, 20, -15, 0] }}
-          transition={{ duration: p.d, delay: p.delay, repeat: Infinity, ease: "linear" }}
-        />
-      ))}
-      {/* Drifting smoke */}
-      <motion.div
-        className="absolute inset-0 opacity-30"
-        style={{
-          background:
-            "radial-gradient(ellipse at 20% 80%, rgba(180,120,60,0.25), transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(220,140,60,0.2), transparent 55%)",
-          filter: "blur(30px)",
-        }}
-        animate={{ x: [0, 40, -20, 0], y: [0, -20, 10, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Grain */}
-      <div
-        className="absolute inset-0 opacity-[0.06] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>\")",
+          background: "linear-gradient(180deg, transparent, rgba(230,198,122,0.6), transparent)",
         }}
       />
     </div>
@@ -377,168 +134,304 @@ function Ambient() {
 /* Main                                                                */
 /* ------------------------------------------------------------------ */
 export default function AmbienceWalkthrough() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-  const p = useSpring(scrollYProgress, { stiffness: 55, damping: 22, mass: 0.7 });
+  const sectionRef = useRef<HTMLElement>(null);
+  const sceneRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const doorRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const leftRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rightRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const glowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const smokeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const captionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const [ready, setReady] = useState(false);
+  const [current, setCurrent] = useState(1);
 
-  // Each scene occupies 1/SCENE_COUNT of scroll.
-  // Within a scene band:
-  //   0.0 – 0.25 : door opens (from previous scene, or entrance for scene 0)
-  //   0.25 – 0.85: dwell / camera pushes forward
-  //   0.85 – 1.0 : fade toward next
-  const bandSize = 1 / SCENE_COUNT;
+  /* Preload every image before mounting scroll logic */
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(
+      SCENES.map(
+        (s) =>
+          new Promise<void>((res) => {
+            const img = new Image();
+            img.onload = () => res();
+            img.onerror = () => res();
+            img.src = s.image;
+          })
+      )
+    ).then(() => {
+      if (!cancelled) setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const sceneMotions = useMemo(
-    () =>
-      SCENES.map((_, i) => ({
-        start: i * bandSize,
-        end: (i + 1) * bandSize,
-      })),
-    [bandSize]
-  );
+  useLayoutEffect(() => {
+    if (!ready || typeof window === "undefined") return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      // Initial state
+      SCENES.forEach((_, i) => {
+        gsap.set(sceneRefs.current[i], { autoAlpha: i === 0 ? 1 : 0 });
+        gsap.set(imgRefs.current[i], { scale: 1.08, xPercent: 0, yPercent: 0 });
+        gsap.set(captionRefs.current[i], { autoAlpha: i === 0 ? 1 : 0, y: 0 });
+        if (i > 0) {
+          gsap.set(doorRefs.current[i], { autoAlpha: 0 });
+          gsap.set(leftRefs.current[i], { xPercent: 0 });
+          gsap.set(rightRefs.current[i], { xPercent: 0 });
+          gsap.set(glowRefs.current[i], { autoAlpha: 0, scaleX: 0 });
+          gsap.set(smokeRefs.current[i], { autoAlpha: 0 });
+        }
+      });
+
+      // Total scroll: ~1 viewport per scene
+      const totalScroll = SCENES.length * window.innerHeight;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => `+=${totalScroll}`,
+          scrub: 0.6,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Segment length per scene in timeline units (arbitrary; 1 per scene)
+      SCENES.forEach((_, i) => {
+        // Camera dwell for scene i
+        tl.to(
+          imgRefs.current[i],
+          { scale: 1.18, xPercent: (i % 2 === 0 ? -1 : 1) * 2, yPercent: -1, ease: "none", duration: 1 },
+          i
+        );
+
+        // Transition to next scene
+        if (i < SCENES.length - 1) {
+          const next = i + 1;
+          // Smoke drift
+          tl.fromTo(
+            smokeRefs.current[next],
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 0.15, ease: "power1.out" },
+            i + 0.75
+          );
+          // Doors appear closed
+          tl.set(doorRefs.current[next], { autoAlpha: 1 }, i + 0.85);
+          // Anticipation pause (closed) — small hold in scrub, then open
+          tl.to(
+            [leftRefs.current[next], rightRefs.current[next]],
+            { duration: 0.15 }, // hold closed
+            i + 0.85
+          );
+          tl.to(
+            glowRefs.current[next],
+            { autoAlpha: 1, scaleX: 1, duration: 0.5, ease: "power2.out" },
+            i + 1.0
+          );
+          tl.to(leftRefs.current[next], { xPercent: -110, duration: 0.5, ease: "power3.inOut" }, i + 1.0);
+          tl.to(rightRefs.current[next], { xPercent: 110, duration: 0.5, ease: "power3.inOut" }, i + 1.0);
+          // Reveal next scene behind doors early
+          tl.to(sceneRefs.current[next], { autoAlpha: 1, duration: 0.25 }, i + 1.05);
+          tl.to(captionRefs.current[i], { autoAlpha: 0, duration: 0.2 }, i + 1.0);
+          tl.to(captionRefs.current[next], { autoAlpha: 1, duration: 0.3 }, i + 1.25);
+          // Hide doors + smoke completely after open
+          tl.to(doorRefs.current[next], { autoAlpha: 0, duration: 0.15 }, i + 1.5);
+          tl.to(smokeRefs.current[next], { autoAlpha: 0, duration: 0.3 }, i + 1.5);
+          tl.to(sceneRefs.current[i], { autoAlpha: 0, duration: 0.2 }, i + 1.55);
+          // Add scene counter update marker via onUpdate below
+        }
+      });
+
+      // Track current scene index for counter
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${totalScroll}`,
+        onUpdate: (self) => {
+          const idx = Math.min(SCENES.length - 1, Math.floor(self.progress * SCENES.length));
+          setCurrent(idx + 1);
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, [ready]);
+
+  const total = SCENES.length;
 
   return (
     <section
-      ref={ref}
+      ref={sectionRef}
       id="ambience-walkthrough"
       aria-labelledby="walkthrough-title"
-      className="relative bg-black text-white"
-      style={{ height: `${SCENE_COUNT * 120}vh` }}
+      className="relative overflow-hidden bg-[#050301] text-white"
+      style={{ height: "100vh" }}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Base black */}
-        <div className="absolute inset-0 bg-[#050301]" />
-
-        {/* Scene layers */}
-        {SCENES.map((scene, i) => {
-          const { start, end } = sceneMotions[i];
-          // Visibility: fade in on door-open, hold, fade out
-          const visibility = useTransform(
-            p,
-            [
-              Math.max(0, start - 0.02),
-              start + bandSize * 0.15,
-              end - bandSize * 0.05,
-              end + 0.01,
-            ],
-            [0, 1, 1, 0]
-          );
-          // Camera dwell progress 0..1 across the scene
-          const camera = useTransform(p, [start, end], [0, 1]);
-          return (
-            <SceneLayer
-              key={scene.id}
-              scene={scene}
-              visibility={visibility}
-              camera={camera}
+      {/* Layer 1: Ambience scenes */}
+      {SCENES.map((scene, i) => (
+        <div
+          key={scene.id}
+          ref={(el) => { sceneRefs.current[i] = el; }}
+          className="absolute inset-0 h-screen w-full will-change-[opacity]"
+          style={{ zIndex: 1 }}
+        >
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              ref={(el) => { imgRefs.current[i] = el; }}
+              src={scene.image}
+              alt={scene.title}
+              className="h-full w-full object-cover will-change-transform"
+              draggable={false}
+              loading={i === 0 ? "eager" : "lazy"}
             />
-          );
-        })}
-
-        <Ambient />
-
-        {/* Door transitions: one before each scene */}
-        {SCENES.map((scene, i) => {
-          const { start } = sceneMotions[i];
-          // Door open window: last 15% of previous band → first 5% of current band
-          const doorStart = Math.max(0, start - bandSize * 0.15);
-          const doorEnd = start + bandSize * 0.02;
-          const doorProgress = useTransform(p, [doorStart, doorEnd], [0, 1]);
-          return (
-            <DoorTransition
-              key={`door-${scene.id}`}
-              progress={doorProgress}
-              label={`${scene.chapter} · ${scene.title}`}
-            />
-          );
-        })}
-
-        {/* Caption card */}
-        <div className="pointer-events-none absolute bottom-8 left-1/2 z-40 w-[min(92vw,620px)] -translate-x-1/2 text-center">
-          {SCENES.map((scene, i) => {
-            const { start, end } = sceneMotions[i];
-            const opacity = useTransform(
-              p,
-              [start + bandSize * 0.2, start + bandSize * 0.35, end - bandSize * 0.1, end],
-              [0, 1, 1, 0]
-            );
-            const y = useTransform(
-              p,
-              [start + bandSize * 0.2, start + bandSize * 0.4],
-              [20, 0]
-            );
-            return (
-              <motion.div
-                key={scene.id}
-                className="absolute inset-x-0 bottom-0"
-                style={{ opacity, y }}
-              >
-                <div className="mx-auto rounded-sm border border-[#c8a25a]/30 bg-black/55 px-6 py-4 backdrop-blur-md">
-                  <span
-                    className="text-[10px] uppercase tracking-[0.5em] text-[#c8a25a]"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {scene.chapter}
-                  </span>
-                  <h3
-                    className="mt-1 text-2xl text-[#f4d78a] md:text-3xl"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                  >
-                    {scene.title}
-                  </h3>
-                  <p
-                    className="mt-1 text-xs text-white/70 md:text-sm"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {scene.caption}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Section title (appears at first scene only) */}
-        <div className="pointer-events-none absolute left-1/2 top-8 z-40 -translate-x-1/2 text-center">
-          <motion.div
+          </div>
+          {/* cinematic vignette */}
+          <div
+            className="absolute inset-0"
             style={{
-              opacity: useTransform(p, [0, 0.05, 0.15], [1, 1, 0]),
+              background:
+                "radial-gradient(ellipse at 50% 55%, transparent 40%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.9) 100%)",
             }}
+          />
+          <div
+            className="absolute inset-0 mix-blend-overlay"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 30%, rgba(255,160,60,0.15), transparent 65%)",
+            }}
+          />
+        </div>
+      ))}
+
+      {/* Layer 2: Door transition overlays (one per scene, only visible during transitions) */}
+      {SCENES.map((scene, i) =>
+        i === 0 ? null : (
+          <div
+            key={`door-${scene.id}`}
+            ref={(el) => { doorRefs.current[i] = el; }}
+            className="pointer-events-none absolute inset-0 will-change-[opacity]"
+            style={{ zIndex: 30 }}
           >
+            {/* Light leak */}
+            <div
+              ref={(el) => { glowRefs.current[i] = el; }}
+              className="absolute left-1/2 top-0 h-full w-[40%] -translate-x-1/2 will-change-transform"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(255,190,90,0.9) 0%, rgba(220,90,40,0.4) 45%, transparent 75%)",
+                filter: "blur(30px)",
+                transformOrigin: "center",
+              }}
+            />
+            <div className="absolute inset-0 flex">
+              <div
+                ref={(el) => { leftRefs.current[i] = el; }}
+                className="h-full w-1/2 will-change-transform"
+                style={{ transform: "translate3d(0,0,0)" }}
+              >
+                <DoorPanel side="left" />
+              </div>
+              <div
+                ref={(el) => { rightRefs.current[i] = el; }}
+                className="h-full w-1/2 will-change-transform"
+                style={{ transform: "translate3d(0,0,0)" }}
+              >
+                <DoorPanel side="right" />
+              </div>
+            </div>
+          </div>
+        )
+      )}
+
+      {/* Layer 3: smoke overlays */}
+      {SCENES.map((scene, i) =>
+        i === 0 ? null : (
+          <div
+            key={`smoke-${scene.id}`}
+            ref={(el) => { smokeRefs.current[i] = el; }}
+            className="pointer-events-none absolute inset-0 will-change-[opacity]"
+            style={{
+              zIndex: 25,
+              background:
+                "radial-gradient(ellipse at 20% 80%, rgba(180,120,60,0.35), transparent 55%), radial-gradient(ellipse at 80% 20%, rgba(220,140,60,0.28), transparent 60%)",
+              filter: "blur(35px)",
+            }}
+          />
+        )
+      )}
+
+      {/* Layer 4: UI */}
+      {SCENES.map((scene, i) => (
+        <div
+          key={`cap-${scene.id}`}
+          ref={(el) => { captionRefs.current[i] = el; }}
+          className="pointer-events-none absolute bottom-10 left-1/2 z-40 w-[min(92vw,620px)] -translate-x-1/2 text-center will-change-[opacity,transform]"
+        >
+          <div className="mx-auto rounded-sm border border-[#c8a25a]/30 bg-black/55 px-6 py-4 backdrop-blur-md">
             <span
-              className="text-[10px] uppercase tracking-[0.6em] text-[#c8a25a]"
+              className="text-[10px] uppercase tracking-[0.5em] text-[#c8a25a]"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              A Walk Through Szechuan Dragon
+              Scene {String(i + 1).padStart(2, "0")}
             </span>
-            <h2
-              id="walkthrough-title"
-              className="mt-2 text-3xl font-light text-[#f4d78a] md:text-5xl"
+            <h3
+              className="mt-1 text-2xl text-[#f4d78a] md:text-3xl"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
-              Cross the Threshold
-            </h2>
-          </motion.div>
+              {scene.title}
+            </h3>
+            <p
+              className="mt-1 text-xs text-white/70 md:text-sm"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              {scene.subtitle}
+            </p>
+          </div>
         </div>
+      ))}
 
-        {/* Scroll cue */}
-        <motion.div
-          className="absolute bottom-2 left-1/2 z-40 -translate-x-1/2 text-[10px] uppercase tracking-[0.5em] text-white/40"
-          animate={{ opacity: [0.3, 0.8, 0.3] }}
-          transition={{ duration: 3, repeat: Infinity }}
+      {/* Section header */}
+      <div className="pointer-events-none absolute left-1/2 top-8 z-40 -translate-x-1/2 text-center">
+        <span
+          className="text-[10px] uppercase tracking-[0.6em] text-[#c8a25a]"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          Scroll · Step forward
-        </motion.div>
+          A Walk Through Szechuan Dragon
+        </span>
+        <h2
+          id="walkthrough-title"
+          className="mt-2 text-2xl font-light text-[#f4d78a] md:text-3xl"
+          style={{ fontFamily: "'Cormorant Garamond', serif" }}
+        >
+          Cross the Threshold
+        </h2>
+      </div>
 
-        {/* Final dim to next section */}
-        <motion.div
-          className="pointer-events-none absolute inset-0 z-50 bg-black"
-          style={{ opacity: useTransform(p, [0.94, 1], [0, 1]) }}
-        />
+      {/* Progress indicator */}
+      <div
+        className="pointer-events-none absolute right-8 top-1/2 z-40 -translate-y-1/2 text-right"
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        <div className="text-[10px] uppercase tracking-[0.5em] text-[#c8a25a]/80">Scene</div>
+        <div className="mt-1 text-2xl text-[#f4d78a]">
+          <span ref={counterRef}>{String(current).padStart(2, "0")}</span>
+          <span className="text-[#c8a25a]/60"> / {String(total).padStart(2, "0")}</span>
+        </div>
+      </div>
+
+      {/* Scroll cue */}
+      <div
+        className="pointer-events-none absolute bottom-2 left-1/2 z-40 -translate-x-1/2 text-[10px] uppercase tracking-[0.5em] text-white/40"
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        Scroll · Step forward
       </div>
     </section>
   );
