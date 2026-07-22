@@ -8,6 +8,7 @@ import CinematicIntro from "@/components/CinematicIntro";
 import DragonsFeast from "@/components/DragonsFeast";
 import AmbienceWalkthrough from "@/components/AmbienceWalkthrough";
 import GuestVoices from "@/components/GuestVoices";
+import FindDragon from "@/components/FindDragon";
 
 export const Route = createFileRoute("/")({
   head: () => ({
