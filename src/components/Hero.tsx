@@ -3,8 +3,43 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Play, ChevronDown, Menu, X } from "lucide-react";
 import heroImg from "@/assets/hero-interior.jpg";
 import lanternImg from "@/assets/lantern.png";
+import { scrollToSection } from "./Footer";
 
-const NAV = ["Home", "About", "Menu", "Gallery", "Reviews", "Locations", "Contact"];
+const NAV: Array<{ label: string; target: string }> = [
+  { label: "Home", target: "home" },
+  { label: "About", target: "story" },
+  { label: "Menu", target: "menu" },
+  { label: "Gallery", target: "gallery" },
+  { label: "Reviews", target: "reviews" },
+  { label: "Locations", target: "locations" },
+  { label: "Contact", target: "contact" },
+];
+
+const INSTAGRAM_URL =
+  "https://www.instagram.com/szechuan_dragon?igsh=MTFsMHF2ajlnaWw3ag%3D%3D";
+const FACEBOOK_URL = "https://www.facebook.com/share/1PDXAMLDfQ/";
+
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState(ids[0]);
+  useEffect(() => {
+    const els = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target.id) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [ids]);
+  return active;
+}
 
 // A single swinging lantern — the string is the pivot, the lantern hangs below and sways like a pendulum.
 function Lantern({
