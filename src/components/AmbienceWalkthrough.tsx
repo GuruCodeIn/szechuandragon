@@ -34,8 +34,8 @@ const TITLES: Record<string, { title: string; subtitle: string }> = {
 };
 
 const SCENES: Scene[] = Object.entries(ambienceModules)
-  .map(([path, mod]) => {
-    const match = path.match(/ambience-([^.]+)\.jpg\.asset\.json$/);
+  .map(([path, url]) => {
+    const match = path.match(/ambience-([^.]+)\.jpg$/);
     const key = match ? match[1] : path;
     const meta = TITLES[key] ?? {
       title: key
@@ -44,7 +44,7 @@ const SCENES: Scene[] = Object.entries(ambienceModules)
         .join(" "),
       subtitle: "Another corner of the Dragon's house.",
     };
-    return { id: key, image: mod.url, ...meta };
+    return { id: key, image: url, ...meta };
   })
   .sort((a, b) => {
     // Preferred narrative order; unknown ids go to the end alphabetically.
