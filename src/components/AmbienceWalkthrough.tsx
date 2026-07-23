@@ -11,9 +11,9 @@ if (typeof window !== "undefined") {
 /* ------------------------------------------------------------------ */
 type AssetJson = { url: string; original_filename: string };
 
-const ambienceModules = import.meta.glob<AssetJson>(
-  "../assets/ambience-*.jpg.asset.json",
-  { eager: true, import: "default" }
+const ambienceModules = import.meta.glob<string>(
+  "../assets/ambience-*.jpg",
+  { eager: true, import: "default", query: "?url" }
 );
 
 type Scene = {
