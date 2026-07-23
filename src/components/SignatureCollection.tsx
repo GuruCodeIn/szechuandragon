@@ -2,12 +2,12 @@ import { motion, useInView, useMotionValue, useSpring, useTransform, animate } f
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowRight, Star } from "lucide-react";
 
-import dragonChicken from "@/assets/dish-dragon-chicken.png.asset.json";
-import chickenFriedRice from "@/assets/dish-chicken-fried-rice.png.asset.json";
-import chilliGarlicRice from "@/assets/dish-chilli-garlic-rice.png.asset.json";
-import vegChilliNoodles from "@/assets/dish-veg-chilli-noodles.png.asset.json";
-import chilliBasilChicken from "@/assets/dish-chilli-basil-chicken.png.asset.json";
-import kungPaoChicken from "@/assets/dish-kung-pao-chicken.png.asset.json";
+import dragonChicken from "@/assets/dish-dragon-chicken.png";
+import chickenFriedRice from "@/assets/dish-chicken-fried-rice.png";
+import chilliGarlicRice from "@/assets/dish-chilli-garlic-rice.png";
+import vegChilliNoodles from "@/assets/dish-veg-chilli-noodles.png";
+import chilliBasilChicken from "@/assets/dish-chilli-basil-chicken.png";
+import kungPaoChicken from "@/assets/dish-kung-pao-chicken.png";
 
 type Dish = {
   name: string;
