@@ -95,8 +95,13 @@ export default function FindDragon() {
     );
   }, []);
 
+  const MAPS_URLS: Record<string, string> = {
+    hanumanthanagar: "https://maps.app.goo.gl/SyPczDjMH4Nga6ry6?g_st=aw",
+    aecs: "https://maps.app.goo.gl/HiPAe31A2dUUuGm87?g_st=aw",
+    hsr: "https://maps.app.goo.gl/aHdDwaD82QPWy874A?g_st=aw",
+  };
   const directionsUrl = (b: Branch) =>
-    `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}`;
+    MAPS_URLS[b.id] ?? `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}`;
 
   return (
     <section

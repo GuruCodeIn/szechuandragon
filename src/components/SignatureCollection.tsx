@@ -2,12 +2,12 @@ import { motion, useInView, useMotionValue, useSpring, useTransform, animate } f
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowRight, Star } from "lucide-react";
 
-import dragonChicken from "@/assets/dish-dragon-chicken.png.asset.json";
-import chickenFriedRice from "@/assets/dish-chicken-fried-rice.png.asset.json";
-import chilliGarlicRice from "@/assets/dish-chilli-garlic-rice.png.asset.json";
-import vegChilliNoodles from "@/assets/dish-veg-chilli-noodles.png.asset.json";
-import chilliBasilChicken from "@/assets/dish-chilli-basil-chicken.png.asset.json";
-import kungPaoChicken from "@/assets/dish-kung-pao-chicken.png.asset.json";
+import dragonChicken from "@/assets/dish-dragon-chicken.png";
+import chickenFriedRice from "@/assets/dish-chicken-fried-rice.png";
+import chilliGarlicRice from "@/assets/dish-chilli-garlic-rice.png";
+import vegChilliNoodles from "@/assets/dish-veg-chilli-noodles.png";
+import chilliBasilChicken from "@/assets/dish-chilli-basil-chicken.png";
+import kungPaoChicken from "@/assets/dish-kung-pao-chicken.png";
 
 type Dish = {
   name: string;
@@ -27,7 +27,7 @@ const DISHES: Dish[] = [
     reviews: 94,
     description:
       "A popular Indo-Chinese favourite featuring crispy chicken tossed in a rich buttery sweet and spicy sauce with ginger, garlic, spring onions and chilli.",
-    image: dragonChicken.url,
+    image: dragonChicken,
     ingredients: ["Ginger", "Garlic", "Spring Onion", "Red Chilli"],
   },
   {
@@ -37,7 +37,7 @@ const DISHES: Dish[] = [
     reviews: 46,
     description:
       "Classic stir-fried rice with tender chicken, vegetables, eggs, soy sauce and traditional seasonings.",
-    image: chickenFriedRice.url,
+    image: chickenFriedRice,
     ingredients: ["Rice", "Egg", "Spring Onion", "Soy"],
   },
   {
@@ -47,7 +47,7 @@ const DISHES: Dish[] = [
     reviews: 54,
     description:
       "Wok-fried rice tossed with chicken, vegetables, fresh garlic, green chillies and aromatic spices.",
-    image: chilliGarlicRice.url,
+    image: chilliGarlicRice,
     ingredients: ["Garlic", "Green Chilli", "Rice", "Spring Onion"],
   },
   {
@@ -57,7 +57,7 @@ const DISHES: Dish[] = [
     reviews: 93,
     description:
       "Soft noodles stir-fried with fresh vegetables, garlic and green chillies for a bold flavour.",
-    image: vegChilliNoodles.url,
+    image: vegChilliNoodles,
     ingredients: ["Noodles", "Garlic", "Bell Pepper", "Green Chilli"],
   },
   {
@@ -67,7 +67,7 @@ const DISHES: Dish[] = [
     reviews: 20,
     description:
       "Thai-inspired crispy chicken stir-fried with aromatic basil, soy sauce and fiery chillies.",
-    image: chilliBasilChicken.url,
+    image: chilliBasilChicken,
     ingredients: ["Basil", "Red Chilli", "Garlic", "Soy"],
   },
   {
@@ -77,7 +77,7 @@ const DISHES: Dish[] = [
     reviews: 15,
     description:
       "Traditional Chinese stir-fried chicken with bell peppers, roasted peanuts and savoury Kung Pao sauce.",
-    image: kungPaoChicken.url,
+    image: kungPaoChicken,
     ingredients: ["Peanut", "Bell Pepper", "Red Chilli", "Garlic"],
   },
 ];

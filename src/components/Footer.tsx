@@ -17,7 +17,7 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 const INSTAGRAM =
   "https://www.instagram.com/szechuan_dragon?igsh=MTFsMHF2ajlnaWw3ag%3D%3D";
-const FACEBOOK = "https://www.facebook.com/share/1PDXAMLDfQ/";
+const FACEBOOK = "https://www.facebook.com/share/1J7tQck63S/";
 
 const QUICK_LINKS: Array<{ label: string; target: string }> = [
   { label: "Home", target: "home" },

@@ -17,7 +17,7 @@ const NAV: Array<{ label: string; target: string }> = [
 
 const INSTAGRAM_URL =
   "https://www.instagram.com/szechuan_dragon?igsh=MTFsMHF2ajlnaWw3ag%3D%3D";
-const FACEBOOK_URL = "https://www.facebook.com/share/1PDXAMLDfQ/";
+const FACEBOOK_URL = "https://www.facebook.com/share/1J7tQck63S/";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState(ids[0]);
