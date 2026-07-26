@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import SmoothScroll from "@/components/SmoothScroll";
 import Hero from "@/components/Hero";
+
 import Experience from "@/components/Experience";
 import OurStory from "@/components/OurStory";
 import SignatureCollection from "@/components/SignatureCollection";
@@ -69,8 +71,10 @@ function Index() {
 
   return (
     <>
+      <SmoothScroll />
       {!introDone && <CinematicIntro onDone={handleDone} />}
       <Hero />
+
       <Experience />
       <OurStory />
       <SignatureCollection />
