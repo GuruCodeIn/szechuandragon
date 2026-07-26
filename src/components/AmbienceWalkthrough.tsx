@@ -196,7 +196,7 @@ export default function AmbienceWalkthrough() {
           trigger: section,
           start: "top top",
           end: () => `+=${totalScroll}`,
-          scrub: 0.6,
+          scrub: 1.4,
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
