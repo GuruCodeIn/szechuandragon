@@ -407,7 +407,7 @@ export default function DragonsFeast() {
   });
 
   // Smooth progress
-  const p = useSpring(scrollYProgress, { stiffness: 60, damping: 22, mass: 0.6 });
+  const p = useSpring(scrollYProgress, { stiffness: 38, damping: 26, mass: 0.9 });
 
   // Table entrance: rotates from 85° down to ~55° across the first 12% of scroll
   const tableTilt = useTransform(p, [0, 0.12], [85, 55]);

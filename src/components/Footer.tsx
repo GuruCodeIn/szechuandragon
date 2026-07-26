@@ -37,9 +37,15 @@ export function scrollToSection(id: string) {
   if (typeof window === "undefined") return;
   const el = document.getElementById(id);
   if (!el) return;
-  el.scrollIntoView({ behavior: "smooth", block: "start" });
+  const lenis = (window as unknown as { __lenis?: { scrollTo: (t: Element, o?: object) => void } }).__lenis;
+  if (lenis) {
+    lenis.scrollTo(el, { offset: -80, duration: 1.6 });
+  } else {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   history.replaceState(null, "", `#${id}`);
 }
+
 
 function Particles() {
   const [dots, setDots] = useState<
